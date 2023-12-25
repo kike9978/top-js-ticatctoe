@@ -1,9 +1,8 @@
 const Game = (function() {
-  const test = "hola"
   let isGameOver = false
-  
-  const testFunction = () => {
-    console.log(test)
+
+  const startGame = () => {
+    GameBoard.displayGameBoard();
   }
 
   const checkGameOver = () => {
@@ -19,7 +18,7 @@ const Game = (function() {
     isGameOver = true;
   }
 
-  return { test, testFunction, checkGameOver, setGameOver }
+  return { startGame, checkGameOver, setGameOver }
 })();
 
 const DisplayControler = (function() {
@@ -30,12 +29,35 @@ const DisplayControler = (function() {
 })();
 
 const GameBoard = (function(){
-  const mark = "x";
-  const gameBoard = [[mark,mark,mark],[mark,mark,"O"],[mark,mark,mark]]
+  const gameBoard = [["","",""],["","",""],["","",""]]
   const displayGameBoard = () => {
-    console.log(gameBoard)
+    gameBoard.forEach(row => console.log(row))
   }
-  return { displayGameBoard }
+  return { gameBoard, displayGameBoard }
 })();
 
-GameBoard.displayGameBoard();
+
+function createPlayer(mark){
+  const obj = Object.create(createPlayer.proto);
+  obj.mark = mark;
+  return obj;
+}
+
+createPlayer.proto = {
+  getMark: function () {
+    return this.mark;
+  },
+  setMark: function(newMark) {
+    this.mark = newMark
+  },
+  markBoard: function(x,y){
+    GameBoard.gameBoard[x][y]= this.mark
+    GameBoard.displayGameBoard();
+  }
+}
+
+
+const playerOne = createPlayer("X");
+const playerTwo = createPlayer("O");
+
+Game.startGame();
