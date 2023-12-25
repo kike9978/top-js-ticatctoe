@@ -3,10 +3,15 @@ const Game = (function () {
   let turn = 1;
 
   const startGame = () => {
+    console.log("Turno: ",turn)
     GameBoard.displayGameBoard();
-    // playerOne.setMark(prompt("Escribe la marca del primer jugador"))
-    // playerTwo.setMark(prompt("Escribe la marca del segundo jugador"))
-    askForMove();
+    // playerOne.setMark(prompt("Escribe la marca del primer jugador", "O"))
+    // playerTwo.setMark(prompt("Escribe la marca del segundo jugador", "X"))
+    while (!isGameOver) {
+      askForMove();
+      turn >= 3 ? isGameOver = true : false;
+      checkGameOver()
+    }
   }
 
   const checkGameOver = () => {
@@ -18,21 +23,24 @@ const Game = (function () {
     }
   }
 
-  const setGameOver = () => {
-    isGameOver = true;
-  }
 
   const getTurn = () => turn;
 
   const askForMove = () => {
-    const x = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`)
-    const y = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`)
-    console.log("---------")
-    playerOne.markBoard(x,y)
-    turn ++;
+
+    // setTimeout(ask, "300ms")
+    ask()
+    function ask() {
+      turn++;
+      const x = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`)
+      const y = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`)
+      console.log("---------")
+      console.log("Turno: ",turn)
+      playerOne.markBoard(x, y)
+    }
   }
 
-  return { startGame, checkGameOver, setGameOver, getTurn }
+  return { startGame, checkGameOver, getTurn }
 })();
 
 const DisplayControler = (function () {
@@ -43,7 +51,12 @@ const DisplayControler = (function () {
 })();
 
 const GameBoard = (function () {
-  const gameBoard = [["", "", ""], ["", "", ""], ["", "", ""]]
+  const gameBoard = [
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""]
+  ]
+
   const displayGameBoard = () => {
     gameBoard.forEach(row => console.log(row))
   }
