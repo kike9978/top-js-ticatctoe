@@ -1,15 +1,19 @@
-const Game = (function() {
+const Game = (function () {
   let isGameOver = false
+  let turn = 1;
 
   const startGame = () => {
     GameBoard.displayGameBoard();
+    // playerOne.setMark(prompt("Escribe la marca del primer jugador"))
+    // playerTwo.setMark(prompt("Escribe la marca del segundo jugador"))
+    askForMove();
   }
 
   const checkGameOver = () => {
-    if(isGameOver){
+    if (isGameOver) {
       console.log("Se acabó el juego")
     }
-    else{
+    else {
       console.log("No se ha acabado")
     }
   }
@@ -18,18 +22,28 @@ const Game = (function() {
     isGameOver = true;
   }
 
-  return { startGame, checkGameOver, setGameOver }
+  const getTurn = () => turn;
+
+  const askForMove = () => {
+    const x = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`)
+    const y = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`)
+    console.log("---------")
+    playerOne.markBoard(x,y)
+    turn ++;
+  }
+
+  return { startGame, checkGameOver, setGameOver, getTurn }
 })();
 
-const DisplayControler = (function() {
+const DisplayControler = (function () {
   let score = 0
   const displayScore = () => score
   const addScore = () => score++;
   return { displayScore, addScore }
 })();
 
-const GameBoard = (function(){
-  const gameBoard = [["","",""],["","",""],["","",""]]
+const GameBoard = (function () {
+  const gameBoard = [["", "", ""], ["", "", ""], ["", "", ""]]
   const displayGameBoard = () => {
     gameBoard.forEach(row => console.log(row))
   }
@@ -37,27 +51,26 @@ const GameBoard = (function(){
 })();
 
 
-function createPlayer(mark){
-  const obj = Object.create(createPlayer.proto);
-  obj.mark = mark;
-  return obj;
-}
+function createPlayer(mark) {
+  const obj = {};
 
-createPlayer.proto = {
-  getMark: function () {
-    return this.mark;
-  },
-  setMark: function(newMark) {
-    this.mark = newMark
-  },
-  markBoard: function(x,y){
-    GameBoard.gameBoard[x][y]= this.mark
+  obj.getMark = function () {
+    return mark;
+  };
+
+  obj.setMark = function (newMark) {
+    mark = newMark;
+  };
+
+  obj.markBoard = function (x, y) {
+    GameBoard.gameBoard[x][y] = mark;
     GameBoard.displayGameBoard();
-  }
+  };
+
+  return obj
 }
-
-
 const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
+
 
 Game.startGame();
