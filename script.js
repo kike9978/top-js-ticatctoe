@@ -36,7 +36,13 @@ const Game = (function () {
       const y = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`)
       console.log("---------")
       console.log("Turno: ",turn)
-      playerOne.markBoard(x, y)
+      if (turn%2 === 1){
+        playerOne.markBoard(x, y)
+      }
+      else{
+        playerTwo.markBoard(x,y)
+      }
+
     }
   }
 
