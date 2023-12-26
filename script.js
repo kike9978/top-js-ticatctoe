@@ -1,3 +1,4 @@
+
 const Game = (function () {
   let isGameOver = false
   let turn = 1;
@@ -12,8 +13,8 @@ const Game = (function () {
       console.log("Turno: ", turn)
       askForMove();
       handleResultValidation();
-      turn++;
-      turn >= 9 ? isGameOver = true : false;
+      
+      turn >= 10 ? isGameOver = true : false;
       checkGameOver()
     }
   }
@@ -45,7 +46,7 @@ const Game = (function () {
     }
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
-
+      
     } else {
       if (turn % 2 === 1) {
         playerOne.markBoard(x, y)
@@ -55,11 +56,12 @@ const Game = (function () {
       }
       GameBoard.displayGameBoard();
 
+      turn++;
     }
   }
 
   function handleResultValidation() {
-    let currentPlayer = turn % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
+    let currentPlayer = turn-1 % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
 
     console.log(currentPlayer)
     GameBoard.winningConditions
@@ -67,9 +69,9 @@ const Game = (function () {
 
       const winCondition = GameBoard.winningConditions[i]
 
-      let a = GameBoard.gameBoard[winCondition[0][0]][winCondition[0][1]]
-      let b = GameBoard.gameBoard[winCondition[1][0]][winCondition[1][1]]
-      let c = GameBoard.gameBoard[winCondition[2][0]][winCondition[2][1]]
+      let a = GameBoard.getValue(winCondition[0][0], winCondition[0][1])
+      let b = GameBoard.getValue(winCondition[1][0], winCondition[1][1])
+      let c = GameBoard.getValue(winCondition[2][0], winCondition[2][1])
       // console.log(winCondition[0])
       // console.log(winCondition[1])
       // console.log(winCondition[2])
@@ -87,7 +89,6 @@ const Game = (function () {
       else {
         console.log("Sigue jugando")
       }
-
     }
   }
 
@@ -95,30 +96,30 @@ const Game = (function () {
   const reset = () => {
     isGameOver = false;
     turn = 1;
-    gameBoard = [
-      ["", "X", ""],
-      ["", "", ""],
-      ["", "X", ""]
-    ]
+    GameBoard.resetBoard();
     startGame()
   }
 
   return { startGame, checkGameOver, getTurn, reset, handleResultValidation }
 })();
 
-const DisplayControler = (function () {
-  let score = 0
-  const displayScore = () => score
-  const addScore = () => score++;
-  return { displayScore, addScore }
-})();
-
 const GameBoard = (function () {
   const gameBoard = [
-    ["", "X", ""],
     ["", "", ""],
-    ["", "X", ""]
+    ["", "", ""],
+    ["", "", ""]
   ]
+
+  const resetBoard = () => {
+    gameBoard = [
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""]
+    ]
+  }
+  const setMarkOnBoard = (x, y, mark) => {
+    gameBoard[x][y] = mark
+  }
 
   const displayGameBoard = () => {
     gameBoard.forEach(row => console.log(row))
@@ -137,7 +138,7 @@ const GameBoard = (function () {
     [[2, 0], [1, 1], [0, 2]],
   ]
 
-  return { gameBoard, displayGameBoard, getValue, winningConditions }
+  return { displayGameBoard, getValue, winningConditions, resetBoard, setMarkOnBoard }
 })();
 
 
@@ -153,7 +154,7 @@ function createPlayer(mark) {
   };
 
   obj.markBoard = function (x, y) {
-    GameBoard.gameBoard[x][y] = mark;
+    GameBoard.setMarkOnBoard(x, y, mark)
   };
 
   return obj
@@ -162,6 +163,13 @@ const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
 
+const GameRenderer = (function() {
+  const init = () => {
+    const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
+    startGameBtn.addEventListener("click", Game.startGame);
+  }
+  return { init }
+})();
 
-const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
-startGameBtn.addEventListener("click", Game.startGame);
+
+GameRenderer.init()
