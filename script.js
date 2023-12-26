@@ -61,9 +61,12 @@ const Game = (function () {
   }
 
   function handleResultValidation() {
-    let currentPlayer = turn-1 % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
+    let currentPlayer = (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
 
-    console.log(currentPlayer)
+    console.warn({currentPlayer})
+    // console.log({turn})
+    // console.log(turn-1)
+    // console.log(turn-1 % 2 === 1)
     GameBoard.winningConditions
     for (let i = 0; i <= 7; i++) {
 
@@ -81,12 +84,11 @@ const Game = (function () {
       // console.log("b: ", b );
       // console.log("c: ", c );
 
-      if (a === b && b === c && c === currentPlayer) {
+      if (a === currentPlayer && b === currentPlayer && c === currentPlayer) {
         console.log("El jugador " + currentPlayer + " ganó, se feliz")
         isGameOver = true
         break
-      }
-      else {
+      }else {
         console.log("Sigue jugando")
       }
     }
