@@ -4,6 +4,7 @@ const Game = (function () {
   let turn = 1;
 
   const startGame = () => {
+    GameRenderer.deleteStartBtn()
     console.log("Que comience el juego")
     GameBoard.displayGameBoard();
     // playerOne.setMark(prompt("Escribe la marca del primer jugador", "O"))
@@ -13,7 +14,7 @@ const Game = (function () {
       console.log("Turno: ", turn)
       askForMove();
       handleResultValidation();
-      
+
       turn >= 10 ? isGameOver = true : false;
       checkGameOver()
     }
@@ -21,7 +22,11 @@ const Game = (function () {
 
   const checkGameOver = () => {
     if (isGameOver) {
+      if(turn >= 10){
+        console.log("Nadie ganó,sopésalo")
+      }
       console.log("Se acabó el juego")
+      GameRenderer.displayResetBtn()
     }
     else {
       console.log("No se ha acabado")
@@ -46,7 +51,7 @@ const Game = (function () {
     }
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
-      
+
     } else {
       if (turn % 2 === 1) {
         playerOne.markBoard(x, y)
@@ -63,7 +68,7 @@ const Game = (function () {
   function handleResultValidation() {
     let currentPlayer = (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
 
-    console.warn({currentPlayer})
+    console.warn({ currentPlayer })
     // console.log({turn})
     // console.log(turn-1)
     // console.log(turn-1 % 2 === 1)
@@ -88,17 +93,15 @@ const Game = (function () {
         console.log("El jugador " + currentPlayer + " ganó, se feliz")
         isGameOver = true
         break
-      }else {
-        console.log("Sigue jugando")
-      }
+      } 
     }
   }
-
 
   const reset = () => {
     isGameOver = false;
     turn = 1;
     GameBoard.resetBoard();
+    GameRenderer.deleteResetBtn()
     startGame()
   }
 
@@ -106,7 +109,7 @@ const Game = (function () {
 })();
 
 const GameBoard = (function () {
-  const gameBoard = [
+  let gameBoard = [
     ["", "", ""],
     ["", "", ""],
     ["", "", ""]
@@ -165,13 +168,30 @@ const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
 
-const GameRenderer = (function() {
-  const init = () => {
-    const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
-    startGameBtn.addEventListener("click", Game.startGame);
+const GameRenderer = (function () {
+
+  const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
+  const startGameClickHandler = () => Game.startGame();
+
+  startGameBtn.addEventListener("click", startGameClickHandler);
+
+
+  const resetBtn = document.createElement("button")
+  resetBtn.setAttribute("data-btn", "reset-btn")
+  resetBtn.addEventListener("click", Game.reset)
+  resetBtn.innerText = "Volver a jugar"
+
+  const displayResetBtn = () => {
+    document.body.appendChild(resetBtn)
   }
-  return { init }
+  const deleteResetBtn = () => {
+    resetBtn.remove()
+  }
+
+  const deleteStartBtn = () => {
+    console.log("Quiero eliminar el boton de start")
+    startGameBtn.remove()
+  }
+
+  return { displayResetBtn, deleteResetBtn, deleteStartBtn }
 })();
-
-
-GameRenderer.init()
