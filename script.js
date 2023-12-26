@@ -11,7 +11,9 @@ const Game = (function () {
       console.log("---------")
       console.log("Turno: ", turn)
       askForMove();
-      turn >= 6 ? isGameOver = true : false;
+      handleResultValidation();
+      turn++;
+      turn >= 9 ? isGameOver = true : false;
       checkGameOver()
     }
   }
@@ -52,7 +54,6 @@ const Game = (function () {
         playerTwo.markBoard(x, y)
       }
       GameBoard.displayGameBoard();
-      turn++;
 
     }
   }
@@ -68,29 +69,37 @@ const Game = (function () {
 
       let a = GameBoard.gameBoard[winCondition[0][0]][winCondition[0][1]]
       let b = GameBoard.gameBoard[winCondition[1][0]][winCondition[1][1]]
-      let c = GameBoard.gameBoard[winCondition[2][0]][winCondition[0][1]]
+      let c = GameBoard.gameBoard[winCondition[2][0]][winCondition[2][1]]
+      // console.log(winCondition[0])
+      // console.log(winCondition[1])
+      // console.log(winCondition[2])
+      // console.table(winCondition)
+      // console.log(i)
+      // console.log("a: ", a );
+      // console.log("b: ", b );
+      // console.log("c: ", c );
 
-      console.log("a: ", a );
-      console.log("b: ", b );
-      console.log("c: ", c );
-      console.log(a === currentPlayer)
-      console.log(b === currentPlayer)
-      console.log(c === currentPlayer)
-
-
-      if(a === currentPlayer && b ===currentPlayer && c === currentPlayer) {
-        console.log("fin")
-        return
+      if (a === b && b === c && c === currentPlayer) {
+        console.log("El jugador " + currentPlayer + " ganó, se feliz")
+        isGameOver = true
+        break
       }
-      
+      else {
+        console.log("Sigue jugando")
+      }
+
     }
-    turn ++;
   }
 
 
   const reset = () => {
     isGameOver = false;
     turn = 1;
+    gameBoard = [
+      ["", "X", ""],
+      ["", "", ""],
+      ["", "X", ""]
+    ]
     startGame()
   }
 
@@ -106,9 +115,9 @@ const DisplayControler = (function () {
 
 const GameBoard = (function () {
   const gameBoard = [
-    ["", "", "O"],
-    ["", "O", "O"],
-    ["", "", "O"]
+    ["", "X", ""],
+    ["", "", ""],
+    ["", "X", ""]
   ]
 
   const displayGameBoard = () => {
@@ -127,7 +136,7 @@ const GameBoard = (function () {
     [[0, 0], [1, 1], [2, 2]],
     [[2, 0], [1, 1], [0, 2]],
   ]
-  
+
   return { gameBoard, displayGameBoard, getValue, winningConditions }
 })();
 
