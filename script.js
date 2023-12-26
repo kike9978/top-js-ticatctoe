@@ -31,8 +31,6 @@ const Game = (function () {
   const askForMove = () => {
 
     const retryMessage = "Escoge un número entre el 0 y el 2"
-    console.log("---------")
-    console.log("turn: ", turn)
 
     let x = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`))
     while (x > 2 || x < 0 || isNaN(x)) {
@@ -59,6 +57,36 @@ const Game = (function () {
     }
   }
 
+  function handleResultValidation() {
+    let currentPlayer = turn % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
+
+    console.log(currentPlayer)
+    GameBoard.winningConditions
+    for (let i = 0; i <= 7; i++) {
+
+      const winCondition = GameBoard.winningConditions[i]
+
+      let a = GameBoard.gameBoard[winCondition[0][0]][winCondition[0][1]]
+      let b = GameBoard.gameBoard[winCondition[1][0]][winCondition[1][1]]
+      let c = GameBoard.gameBoard[winCondition[2][0]][winCondition[0][1]]
+
+      console.log("a: ", a );
+      console.log("b: ", b );
+      console.log("c: ", c );
+      console.log(a === currentPlayer)
+      console.log(b === currentPlayer)
+      console.log(c === currentPlayer)
+
+
+      if(a === currentPlayer && b ===currentPlayer && c === currentPlayer) {
+        console.log("fin")
+        return
+      }
+      
+    }
+    turn ++;
+  }
+
 
   const reset = () => {
     isGameOver = false;
@@ -66,7 +94,7 @@ const Game = (function () {
     startGame()
   }
 
-  return { startGame, checkGameOver, getTurn, reset }
+  return { startGame, checkGameOver, getTurn, reset, handleResultValidation }
 })();
 
 const DisplayControler = (function () {
@@ -78,9 +106,9 @@ const DisplayControler = (function () {
 
 const GameBoard = (function () {
   const gameBoard = [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", ""]
+    ["", "", "O"],
+    ["", "O", "O"],
+    ["", "", "O"]
   ]
 
   const displayGameBoard = () => {
@@ -88,7 +116,19 @@ const GameBoard = (function () {
   }
 
   const getValue = (x, y) => gameBoard[x][y];
-  return { gameBoard, displayGameBoard, getValue }
+
+  const winningConditions = [
+    [[0, 0], [0, 1], [0, 2]],
+    [[1, 0], [1, 1], [1, 2]],
+    [[2, 0], [2, 1], [2, 2]],
+    [[0, 0], [1, 0], [2, 0]],
+    [[0, 1], [1, 1], [2, 1]],
+    [[0, 2], [1, 2], [2, 2]],
+    [[0, 0], [1, 1], [2, 2]],
+    [[2, 0], [1, 1], [0, 2]],
+  ]
+  
+  return { gameBoard, displayGameBoard, getValue, winningConditions }
 })();
 
 
