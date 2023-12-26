@@ -3,13 +3,15 @@ const Game = (function () {
   let turn = 1;
 
   const startGame = () => {
-    console.log("Turno: ",turn)
+    console.log("Que comience el juego")
     GameBoard.displayGameBoard();
     // playerOne.setMark(prompt("Escribe la marca del primer jugador", "O"))
     // playerTwo.setMark(prompt("Escribe la marca del segundo jugador", "X"))
     while (!isGameOver) {
+      console.log("---------")
+      console.log("Turno: ", turn)
       askForMove();
-      turn >= 3 ? isGameOver = true : false;
+      turn >= 6 ? isGameOver = true : false;
       checkGameOver()
     }
   }
@@ -28,25 +30,43 @@ const Game = (function () {
 
   const askForMove = () => {
 
-    // setTimeout(ask, "300ms")
-    ask()
-    function ask() {
-      turn++;
-      const x = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`)
-      const y = prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`)
-      console.log("---------")
-      console.log("Turno: ",turn)
-      if (turn%2 === 1){
+    const retryMessage = "Escoge un número entre el 0 y el 2"
+    console.log("---------")
+    console.log("turn: ", turn)
+
+    let x = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`))
+    while (x > 2 || x < 0 || isNaN(x)) {
+      x = parseInt(prompt(retryMessage))
+
+    }
+    let y = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`))
+    while (y > 2 || y < 0 || isNaN(y)) {
+      y = parseInt(prompt(retryMessage))
+    }
+    if (GameBoard.getValue(x, y) !== "") {
+      console.log("Valor tomado")
+
+    } else {
+      if (turn % 2 === 1) {
         playerOne.markBoard(x, y)
       }
-      else{
-        playerTwo.markBoard(x,y)
+      else {
+        playerTwo.markBoard(x, y)
       }
+      GameBoard.displayGameBoard();
+      turn++;
 
     }
   }
 
-  return { startGame, checkGameOver, getTurn }
+
+  const reset = () => {
+    isGameOver = false;
+    turn = 1;
+    startGame()
+  }
+
+  return { startGame, checkGameOver, getTurn, reset }
 })();
 
 const DisplayControler = (function () {
@@ -66,7 +86,9 @@ const GameBoard = (function () {
   const displayGameBoard = () => {
     gameBoard.forEach(row => console.log(row))
   }
-  return { gameBoard, displayGameBoard }
+
+  const getValue = (x, y) => gameBoard[x][y];
+  return { gameBoard, displayGameBoard, getValue }
 })();
 
 
@@ -83,7 +105,6 @@ function createPlayer(mark) {
 
   obj.markBoard = function (x, y) {
     GameBoard.gameBoard[x][y] = mark;
-    GameBoard.displayGameBoard();
   };
 
   return obj
@@ -92,4 +113,6 @@ const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
 
-Game.startGame();
+
+const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
+startGameBtn.addEventListener("click", Game.startGame);
