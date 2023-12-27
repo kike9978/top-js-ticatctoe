@@ -60,6 +60,7 @@ const Game = (function () {
 
       if (a === currentPlayer && b === currentPlayer && c === currentPlayer) {
         console.log("El jugador " + currentPlayer + " ganó, se feliz")
+        GameRenderer.removeEvents()
         isGameOver = true
         break
       }
@@ -79,7 +80,7 @@ const Game = (function () {
       [2, 2],
     ]
 
-    const [x,y] = grid[boardIndex]
+    const [x, y] = grid[boardIndex]
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
 
@@ -91,11 +92,10 @@ const Game = (function () {
         playerTwo.markBoard(x, y)
       }
       GameBoard.displayGameBoard();
-
-
       turn++;
       GameRenderer.updateTurn()
       GameRenderer.updatePlayer()
+      handleResultValidation()
     }
   }
 
@@ -182,18 +182,22 @@ const GameRenderer = (function () {
   currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
 
   const spaces = document.querySelectorAll(`[data-game*="space"]`)
+  const spaceClickHandlers = [];
 
+  function handleSpaceClick(index) {
 
+    return function () {
+      Game.makeAMove(index)
+      spaces[index].innerText = GameBoard.getBoard().flat()[index];
+      console.log(spaces[index].getAttribute("data-game"))
+    }
+  }
 
   spaces.forEach((space, index) => {
-    // space.innerText = index;
+    const handler = handleSpaceClick(index)
     space.innerText = GameBoard.getBoard().flat()[index];
-    space.addEventListener("click", () => {
-      Game.makeAMove(index)
-
-      space.innerText = GameBoard.getBoard().flat()[index];
-      console.log(space.getAttribute("data-game"))
-    })
+    space.addEventListener("click", handler)
+    spaceClickHandlers.push({ space, handler })
   })
 
   const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
@@ -225,6 +229,12 @@ const GameRenderer = (function () {
   const updatePlayer = () => {
     currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
   }
+
+  const removeEvents = () => {
+    spaceClickHandlers.forEach(({ space, handler }) => {
+      space.removeEventListener("click", handler)
+    });
+  }
   // (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
-  return { displayResetBtn, deleteResetBtn, deleteStartBtn, updatePlayer, updateTurn }
+  return { displayResetBtn, deleteResetBtn, deleteStartBtn, updatePlayer, updateTurn, removeEvents }
 })();
