@@ -1,4 +1,3 @@
-
 const Game = (function () {
   let isGameOver = false
   let turn = 1;
@@ -7,6 +6,7 @@ const Game = (function () {
     GameRenderer.deleteStartBtn()
     console.log("Que comience el juego")
     GameBoard.displayGameBoard();
+
     while (!isGameOver) {
       console.log("---------")
       console.log("Turno: ", turn)
@@ -25,8 +25,7 @@ const Game = (function () {
       }
       console.log("Se acabó el juego")
       GameRenderer.displayResetBtn()
-    }
-    else {
+    } else {
       console.log("No se ha acabado")
     }
   }
@@ -35,7 +34,8 @@ const Game = (function () {
   const getTurn = () => turn;
 
   function handleResultValidation() {
-    let currentPlayer = (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
+    let currentPlayer =
+      (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark();
 
     console.warn({ currentPlayer })
     // console.log({turn})
@@ -43,9 +43,7 @@ const Game = (function () {
     // console.log(turn-1 % 2 === 1)
     GameBoard.winningConditions
     for (let i = 0; i <= 7; i++) {
-
       const winCondition = GameBoard.winningConditions[i]
-
       let a = GameBoard.getValue(winCondition[0][0], winCondition[0][1])
       let b = GameBoard.getValue(winCondition[1][0], winCondition[1][1])
       let c = GameBoard.getValue(winCondition[2][0], winCondition[2][1])
@@ -79,7 +77,6 @@ const Game = (function () {
       [2, 1],
       [2, 2],
     ]
-
     const [x, y] = grid[boardIndex]
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
@@ -108,7 +105,14 @@ const Game = (function () {
     startGame()
   }
 
-  return { startGame, checkGameOver, getTurn, reset, handleResultValidation, makeAMove }
+  return {
+    startGame,
+    checkGameOver,
+    getTurn,
+    reset,
+    handleResultValidation,
+    makeAMove
+  }
 })();
 
 const GameBoard = (function () {
@@ -169,42 +173,22 @@ function createPlayer(mark) {
 
   return obj
 }
+
 const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
-
 const GameRenderer = (function () {
-
-
   const turn = document.querySelector(`[data-game="turn"]`)
   const currentPlayer = document.querySelector(`[data-game="current-player"]`)
+  
   turn.innerText += ` ${Game.getTurn()}`;
   currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
 
-  const spaces = document.querySelectorAll(`[data-game*="space"]`)
-  const spaceClickHandlers = [];
-
-  function handleSpaceClick(index) {
-
-    return function () {
-      Game.makeAMove(index)
-      spaces[index].innerText = GameBoard.getBoard().flat()[index];
-      console.log(spaces[index].getAttribute("data-game"))
-    }
-  }
-
-  spaces.forEach((space, index) => {
-    const handler = handleSpaceClick(index)
-    space.innerText = GameBoard.getBoard().flat()[index];
-    space.addEventListener("click", handler)
-    spaceClickHandlers.push({ space, handler })
-  })
+  const gameBoardContainer = document.querySelector(`[data-game="board"]`)
+  gameBoardContainer.addEventListener("click", handleSpaceClick)
 
   const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
-  const startGameClickHandler = () => Game.startGame();
-
-  startGameBtn.addEventListener("click", startGameClickHandler);
-
+  startGameBtn.addEventListener("click", Game.startGame);
 
   const resetBtn = document.createElement("button")
   resetBtn.setAttribute("data-btn", "reset-btn")
@@ -231,10 +215,22 @@ const GameRenderer = (function () {
   }
 
   const removeEvents = () => {
-    spaceClickHandlers.forEach(({ space, handler }) => {
-      space.removeEventListener("click", handler)
-    });
+      gameBoardContainer.removeEventListener("click", handleSpaceClick)
   }
-  // (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
-  return { displayResetBtn, deleteResetBtn, deleteStartBtn, updatePlayer, updateTurn, removeEvents }
+
+  function handleSpaceClick(event) {
+    const space = event.target;
+    const index = Array.from(space.parentNode.children).indexOf(space)
+    Game.makeAMove(index)
+    space.innerText = GameBoard.getBoard().flat()[index];
+    console.log(space.getAttribute("data-game"))
+  }
+  
+  return { 
+    displayResetBtn, 
+    deleteResetBtn, 
+    deleteStartBtn, 
+    updatePlayer, 
+    updateTurn, 
+    removeEvents }
 })();
