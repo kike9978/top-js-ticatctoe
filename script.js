@@ -40,15 +40,15 @@ const Game = (function () {
 
     const retryMessage = "Escoge un número entre el 0 y el 2"
 
-    let x = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`))
-    while (x > 2 || x < 0 || isNaN(x)) {
-      x = parseInt(prompt(retryMessage))
+    // let x = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`))
+    // while (x > 2 || x < 0 || isNaN(x)) {
+    //   x = parseInt(prompt(retryMessage))
 
-    }
-    let y = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`))
-    while (y > 2 || y < 0 || isNaN(y)) {
-      y = parseInt(prompt(retryMessage))
-    }
+    // }
+    // let y = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`))
+    // while (y > 2 || y < 0 || isNaN(y)) {
+    //   y = parseInt(prompt(retryMessage))
+    // }
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
 
@@ -96,6 +96,48 @@ const Game = (function () {
       }
     }
   }
+  const makeAMove = (boardIndex) => {
+
+    const grid = [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ]
+
+    const [x,y] = grid[boardIndex]
+    if (GameBoard.getValue(x, y) !== "") {
+      console.log("Valor tomado")
+
+    } else {
+      if (turn % 2 === 1) {
+        // playerOne.markBoard(x, y)
+        playerOne.markBoard(x, y)
+      }
+      else {
+        // playerTwo.markBoard(x, y)
+        playerTwo.markBoard(x, y)
+      }
+      GameBoard.displayGameBoard();
+
+      turn++;
+    }
+
+    // if (Game.getTurn() % 2 === 1) {
+    //   playerOne.markBoard(grid[boardIndex][0], grid[boardIndex][1])
+
+    // } else {
+    //   playerTwo.markBoard(grid[boardIndex][0], grid[boardIndex][1])
+
+    // }
+    // turn += 1;
+  }
+
 
   const reset = () => {
     isGameOver = false;
@@ -105,7 +147,7 @@ const Game = (function () {
     startGame()
   }
 
-  return { startGame, checkGameOver, getTurn, reset, handleResultValidation }
+  return { startGame, checkGameOver, getTurn, reset, handleResultValidation, makeAMove }
 })();
 
 const GameBoard = (function () {
@@ -170,36 +212,27 @@ const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
 
+
+
+
 const GameRenderer = (function () {
+
+
   const turn = document.querySelector(`[data-game="turn"]`)
-  const currentPlayer = document.querySelector(`[data-game="currentPlayer"]`)
-  turn.innerText += Game.getTurn();
+  const currentPlayer = document.querySelector(`[data-game="current-player"]`)
+  turn.innerText += ` ${Game.getTurn()}`;
+  currentPlayer.innerText += " X"
 
   const spaces = document.querySelectorAll(`[data-game*="space"]`)
 
-  const grid = [
-    [0,0],
-    [0,1],
-    [0,2],
-    [1,0],
-    [1,1],
-    [1,2],
-    [2,0],
-    [2,1],
-    [2,2],
-  ]
+
 
   spaces.forEach((space, index) => {
     // space.innerText = index;
     space.innerText = GameBoard.getBoard().flat()[index];
     space.addEventListener("click", () => {
-      if (Game.getTurn() % 2 === 1){
-        playerOne.markBoard(grid[index][0],grid[index][1])
-        
-      }else{
-        playerTwo.markBoard(grid[index][0],grid[index][1])
+      Game.makeAMove(index)
 
-    }
       space.innerText = GameBoard.getBoard().flat()[index];
       console.log(space.getAttribute("data-game"))
     })
