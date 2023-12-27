@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic tac toe js</title>
   <link rel="stylesheet" href="reset.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./dist/output.css">
   <script src="./script.js" defer></script>
 </head>
+
 <body>
-  <h1>Gato</h1>
-  <button data-btn="start-game">Empezar juego</button>
+  <main class="flex flex-col h-full items-center gap-2">
+    <h1 class="text-center text-5xl">Gato</h1>
+    
+    <button class="bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none"
+      data-btn="start-game">Empezar juego</button>
+      <h2 data-game="turn">Turno: </h2>
+      <h2 data-game="current-player">Jugador: </h2>
+
+    <section class="game-board grid grid-cols-[repeat(3,100px)] grid-rows-[repeat(3,100px)] gap-1">
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-1"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-2"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-3"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-4"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-5"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-6"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-7"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-8"></button>
+      <button class="space border rounded-sm hover:bg-slate-100 cursor-pointer" data-game="space-9"></button>
+    </section>
+  </main>
 </body>
+
 </html>

@@ -22,7 +22,7 @@ const Game = (function () {
 
   const checkGameOver = () => {
     if (isGameOver) {
-      if(turn >= 10){
+      if (turn >= 10) {
         console.log("Nadie ganó,sopésalo")
       }
       console.log("Se acabó el juego")
@@ -93,7 +93,7 @@ const Game = (function () {
         console.log("El jugador " + currentPlayer + " ganó, se feliz")
         isGameOver = true
         break
-      } 
+      }
     }
   }
 
@@ -132,6 +132,8 @@ const GameBoard = (function () {
 
   const getValue = (x, y) => gameBoard[x][y];
 
+  const getBoard = () => gameBoard;
+
   const winningConditions = [
     [[0, 0], [0, 1], [0, 2]],
     [[1, 0], [1, 1], [1, 2]],
@@ -143,7 +145,7 @@ const GameBoard = (function () {
     [[2, 0], [1, 1], [0, 2]],
   ]
 
-  return { displayGameBoard, getValue, winningConditions, resetBoard, setMarkOnBoard }
+  return { displayGameBoard, getValue, winningConditions, resetBoard, setMarkOnBoard, getBoard }
 })();
 
 
@@ -169,6 +171,39 @@ const playerTwo = createPlayer("O");
 
 
 const GameRenderer = (function () {
+  const turn = document.querySelector(`[data-game="turn"]`)
+  const currentPlayer = document.querySelector(`[data-game="currentPlayer"]`)
+  turn.innerText += Game.getTurn();
+
+  const spaces = document.querySelectorAll(`[data-game*="space"]`)
+
+  const grid = [
+    [0,0],
+    [0,1],
+    [0,2],
+    [1,0],
+    [1,1],
+    [1,2],
+    [2,0],
+    [2,1],
+    [2,2],
+  ]
+
+  spaces.forEach((space, index) => {
+    // space.innerText = index;
+    space.innerText = GameBoard.getBoard().flat()[index];
+    space.addEventListener("click", () => {
+      if (Game.getTurn() % 2 === 1){
+        playerOne.markBoard(grid[index][0],grid[index][1])
+        
+      }else{
+        playerTwo.markBoard(grid[index][0],grid[index][1])
+
+    }
+      space.innerText = GameBoard.getBoard().flat()[index];
+      console.log(space.getAttribute("data-game"))
+    })
+  })
 
   const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
   const startGameClickHandler = () => Game.startGame();
@@ -189,7 +224,6 @@ const GameRenderer = (function () {
   }
 
   const deleteStartBtn = () => {
-    console.log("Quiero eliminar el boton de start")
     startGameBtn.remove()
   }
 
