@@ -7,8 +7,6 @@ const Game = (function () {
     GameRenderer.deleteStartBtn()
     console.log("Que comience el juego")
     GameBoard.displayGameBoard();
-    // playerOne.setMark(prompt("Escribe la marca del primer jugador", "O"))
-    // playerTwo.setMark(prompt("Escribe la marca del segundo jugador", "X"))
     while (!isGameOver) {
       console.log("---------")
       console.log("Turno: ", turn)
@@ -35,35 +33,6 @@ const Game = (function () {
 
 
   const getTurn = () => turn;
-
-  const askForMove = () => {
-
-    const retryMessage = "Escoge un número entre el 0 y el 2"
-
-    // let x = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento x`))
-    // while (x > 2 || x < 0 || isNaN(x)) {
-    //   x = parseInt(prompt(retryMessage))
-
-    // }
-    // let y = parseInt(prompt(`Turno: ${turn}, Turno de jugador 1, movimiento y`))
-    // while (y > 2 || y < 0 || isNaN(y)) {
-    //   y = parseInt(prompt(retryMessage))
-    // }
-    if (GameBoard.getValue(x, y) !== "") {
-      console.log("Valor tomado")
-
-    } else {
-      if (turn % 2 === 1) {
-        playerOne.markBoard(x, y)
-      }
-      else {
-        playerTwo.markBoard(x, y)
-      }
-      GameBoard.displayGameBoard();
-
-      turn++;
-    }
-  }
 
   function handleResultValidation() {
     let currentPlayer = (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
@@ -116,26 +85,18 @@ const Game = (function () {
 
     } else {
       if (turn % 2 === 1) {
-        // playerOne.markBoard(x, y)
         playerOne.markBoard(x, y)
       }
       else {
-        // playerTwo.markBoard(x, y)
         playerTwo.markBoard(x, y)
       }
       GameBoard.displayGameBoard();
 
+
       turn++;
+      GameRenderer.updateTurn()
+      GameRenderer.updatePlayer()
     }
-
-    // if (Game.getTurn() % 2 === 1) {
-    //   playerOne.markBoard(grid[boardIndex][0], grid[boardIndex][1])
-
-    // } else {
-    //   playerTwo.markBoard(grid[boardIndex][0], grid[boardIndex][1])
-
-    // }
-    // turn += 1;
   }
 
 
@@ -212,16 +173,13 @@ const playerOne = createPlayer("X");
 const playerTwo = createPlayer("O");
 
 
-
-
-
 const GameRenderer = (function () {
 
 
   const turn = document.querySelector(`[data-game="turn"]`)
   const currentPlayer = document.querySelector(`[data-game="current-player"]`)
   turn.innerText += ` ${Game.getTurn()}`;
-  currentPlayer.innerText += " X"
+  currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
 
   const spaces = document.querySelectorAll(`[data-game*="space"]`)
 
@@ -260,5 +218,13 @@ const GameRenderer = (function () {
     startGameBtn.remove()
   }
 
-  return { displayResetBtn, deleteResetBtn, deleteStartBtn }
+  const updateTurn = () => {
+    turn.innerText = `Turn: ${Game.getTurn()}`
+  }
+
+  const updatePlayer = () => {
+    currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
+  }
+  // (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()
+  return { displayResetBtn, deleteResetBtn, deleteStartBtn, updatePlayer, updateTurn }
 })();
