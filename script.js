@@ -18,17 +18,22 @@ const Game = (function () {
   //   }
   // }
 
-  const checkGameOver = (currentPlayer="") => {
-    if (isGameOver) {
+  const checkGameOver = (currentPlayer = "") => {
+    let message = ""
+
+    if (isGameOver && !turn >= 10) {
+      message = `Se acabó el juego. ${currentPlayer} ganó`
+      console.log(message)
       console.log(turn)
-      if (turn >= 10) {
-        console.log("Nadie ganó,sopésalo")
-        GameRenderer.displayResetBtn()
-      }
-      console.log(`Se acabó el juego. ${currentPlayer} ganó`)
+    }
+    if (turn >= 10) {
+      isGameOver = true;
+      message = "Nadie ganó,sopésalo"
+      console.log(message)
+    }
+    if (isGameOver) {
+      console.log("Terminó el juego")
       GameRenderer.displayResetBtn()
-    } else {
-      console.log("No se ha acabado")
     }
   }
 
@@ -40,7 +45,7 @@ const Game = (function () {
       (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark();
 
     console.warn({ currentPlayer })
-    GameBoard.winningConditions
+
     for (let i = 0; i <= 7; i++) {
       const winCondition = GameBoard.winningConditions[i]
       let a = GameBoard.getValue(winCondition[0][0], winCondition[0][1])
@@ -55,10 +60,9 @@ const Game = (function () {
         break
       }
     }
-    checkGameOver();
   }
-  const makeAMove = (boardIndex) => {
 
+  const makeAMove = (boardIndex) => {
     const grid = [
       [0, 0],
       [0, 1],
@@ -70,6 +74,7 @@ const Game = (function () {
       [2, 1],
       [2, 2],
     ]
+
     const [x, y] = grid[boardIndex]
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
@@ -81,11 +86,15 @@ const Game = (function () {
       else {
         playerTwo.markBoard(x, y)
       }
+
       GameBoard.displayGameBoard();
       turn++;
       GameRenderer.updateTurn()
       GameRenderer.updatePlayer()
       handleResultValidation()
+      console.log({ turn })
+      console.log(turn >= 10)
+      checkGameOver()
     }
   }
 
@@ -95,7 +104,6 @@ const Game = (function () {
     turn = 1;
     GameBoard.resetBoard();
     GameRenderer.resetUI()
-    // startGame()
   }
 
   return {
@@ -189,7 +197,7 @@ const GameRenderer = (function () {
   const resetBtn = document.createElement("button")
   resetBtn.setAttribute("data-btn", "reset-btn")
   resetBtn.addEventListener("click", Game.reset)
-  resetBtn.setAttribute("class","bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none")
+  resetBtn.setAttribute("class", "bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none")
   resetBtn.innerText = "Volver a jugar"
 
   const displayResetBtn = () => {
@@ -217,12 +225,12 @@ const GameRenderer = (function () {
   }
 
   function resetBoard() {
-    Array.from(gameBoardContainer.children).forEach (( space, index ) =>{
+    Array.from(gameBoardContainer.children).forEach((space, index) => {
       gameBoardContainer.children[index].innerText = ""
     })
   }
   const resetUI = () => {
-    
+
     deleteResetBtn()
     addBoardEvents()
     resetBoard()
