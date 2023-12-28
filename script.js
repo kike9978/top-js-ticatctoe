@@ -19,21 +19,21 @@ const Game = (function () {
   // }
 
   const checkGameOver = (currentPlayer = "") => {
+    console.log("Soy el jugador: " + currentPlayer)
     let message = ""
-
-    if (isGameOver && !turn >= 10) {
-      message = `Se acabó el juego. ${currentPlayer} ganó`
-      console.log(message)
-      console.log(turn)
+    if (isGameOver && !(turn >= 10)) {
+      // console.log({currentPlayer})
+      message = `Se acabó el juego. ${currentPlayer} ganó.`
+      GameRenderer.openDialog()
     }
     if (turn >= 10) {
       isGameOver = true;
-      message = "Nadie ganó,sopésalo"
-      console.log(message)
+      message = "Nadie ganó, sopésalo."
     }
     if (isGameOver) {
-      console.log("Terminó el juego")
-      GameRenderer.displayResetBtn()
+      message += " Terminó el juego"
+      GameRenderer.setMessage(message);
+      GameRenderer.openDialog()
     }
   }
 
@@ -44,8 +44,6 @@ const Game = (function () {
     let currentPlayer =
       (turn - 1) % 2 === 1 ? playerOne.getMark() : playerTwo.getMark();
 
-    console.warn({ currentPlayer })
-
     for (let i = 0; i <= 7; i++) {
       const winCondition = GameBoard.winningConditions[i]
       let a = GameBoard.getValue(winCondition[0][0], winCondition[0][1])
@@ -53,9 +51,9 @@ const Game = (function () {
       let c = GameBoard.getValue(winCondition[2][0], winCondition[2][1])
 
       if (a === currentPlayer && b === currentPlayer && c === currentPlayer) {
-        // console.log("El jugador " + currentPlayer + " ganó, se feliz")
         isGameOver = true
         GameRenderer.removeEvents()
+        console.log(currentPlayer)
         checkGameOver(currentPlayer);
         break
       }
@@ -77,8 +75,8 @@ const Game = (function () {
 
     const [x, y] = grid[boardIndex]
     if (GameBoard.getValue(x, y) !== "") {
-      console.log("Valor tomado")
-      
+
+
     } else {
       if (turn % 2 === 1) {
         playerOne.markBoard(x, y)
@@ -86,15 +84,20 @@ const Game = (function () {
       else {
         playerTwo.markBoard(x, y)
       }
-
-      GameBoard.displayGameBoard();
+      
       turn++;
-      GameRenderer.updateTurn()
-      GameRenderer.updatePlayer()
       handleResultValidation()
-      console.log({ turn })
-      console.log(turn >= 10)
-      checkGameOver()
+
+      if (!isGameOver) {
+        console.log("aun no se acaba el juego")
+        checkGameOver()
+        if (!isGameOver) {
+        GameBoard.displayGameBoard();
+        GameRenderer.updateTurn()
+        GameRenderer.updatePlayer()
+        }
+
+      }
     }
   }
 
@@ -135,7 +138,7 @@ const GameBoard = (function () {
   }
 
   const displayGameBoard = () => {
-    gameBoard.forEach(row => console.log(row))
+    // gameBoard.forEach(row => console.log(row))
   }
 
   const getValue = (x, y) => gameBoard[x][y];
@@ -181,6 +184,8 @@ const playerTwo = createPlayer("O");
 const GameRenderer = (function () {
   const turn = document.querySelector(`[data-game="turn"]`)
   const currentPlayer = document.querySelector(`[data-game="current-player"]`)
+  const dialog = document.querySelector("dialog")
+  const messageText = document.querySelector(`[data-game="message"]`)
 
   turn.innerText = `Turn: ${Game.getTurn()}`;
   currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
@@ -194,18 +199,18 @@ const GameRenderer = (function () {
   const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
   // startGameBtn.addEventListener("click", Game.startGame);
 
-  const resetBtn = document.createElement("button")
-  resetBtn.setAttribute("data-btn", "reset-btn")
+  const resetBtn = document.querySelector(`[data-btn="reset-game"]`)
   resetBtn.addEventListener("click", Game.reset)
-  resetBtn.setAttribute("class", "bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none")
-  resetBtn.innerText = "Volver a jugar"
+  // resetBtn.setAttribute("data-btn", "reset-btn")
+  // resetBtn.setAttribute("class", "bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none")
+  // resetBtn.innerText = "Volver a jugar"
 
-  const displayResetBtn = () => {
-    document.querySelector("main").appendChild(resetBtn)
+  const setMessage = (message) => {
+    messageText.innerText = message;
   }
 
-  function deleteResetBtn() {
-    resetBtn.remove()
+  const openDialog = () => {
+    dialog.showModal()
   }
 
   const deleteStartBtn = () => {
@@ -230,8 +235,7 @@ const GameRenderer = (function () {
     })
   }
   const resetUI = () => {
-
-    deleteResetBtn()
+    dialog.close()
     addBoardEvents()
     resetBoard()
     turn.innerText = `Turn: 1`;
@@ -248,15 +252,15 @@ const GameRenderer = (function () {
     const index = Array.from(space.parentNode.children).indexOf(space)
     Game.makeAMove(index)
     space.innerText = GameBoard.getBoard().flat()[index];
-    console.log(space.getAttribute("data-game"))
   }
 
   return {
-    displayResetBtn,
+    openDialog,
     deleteStartBtn,
     updatePlayer,
     updateTurn,
     removeEvents,
-    resetUI
+    resetUI,
+    setMessage,
   }
 })();
