@@ -2,27 +2,9 @@ const Game = (function () {
   let isGameOver = false
   let turn = 1;
 
-  // const startGame = () => {
-  //   GameRenderer.deleteStartBtn()
-  //   console.log("Que comience el juego")
-  //   GameBoard.displayGameBoard();
-
-  //   while (!isGameOver) {
-  //     console.log("---------")
-  //     console.log("Turno: ", turn)
-  //     askForMove();
-  //     handleResultValidation();
-
-  //     turn >= 10 ? isGameOver = true : false;
-  //     checkGameOver()
-  //   }
-  // }
-
   const checkGameOver = (currentPlayer = "") => {
-    console.log("Soy el jugador: " + currentPlayer)
     let message = ""
     if (isGameOver && !(turn >= 10)) {
-      // console.log({currentPlayer})
       message = `Se acabó el juego. ${currentPlayer} ganó.`
       GameRenderer.openDialog()
     }
@@ -53,7 +35,6 @@ const Game = (function () {
       if (a === currentPlayer && b === currentPlayer && c === currentPlayer) {
         isGameOver = true
         GameRenderer.removeEvents()
-        console.log(currentPlayer)
         checkGameOver(currentPlayer);
         break
       }
@@ -89,7 +70,6 @@ const Game = (function () {
       handleResultValidation()
 
       if (!isGameOver) {
-        console.log("aun no se acaba el juego")
         checkGameOver()
         if (!isGameOver) {
         GameBoard.displayGameBoard();
@@ -110,7 +90,6 @@ const Game = (function () {
   }
 
   return {
-    // startGame,
     checkGameOver,
     getTurn,
     reset,
@@ -138,7 +117,7 @@ const GameBoard = (function () {
   }
 
   const displayGameBoard = () => {
-    // gameBoard.forEach(row => console.log(row))
+    gameBoard.forEach(row => console.log(row))
   }
 
   const getValue = (x, y) => gameBoard[x][y];
@@ -197,13 +176,9 @@ const GameRenderer = (function () {
   addBoardEvents()
 
   const startGameBtn = document.querySelector(`[data-btn="start-game"]`)
-  // startGameBtn.addEventListener("click", Game.startGame);
 
   const resetBtn = document.querySelector(`[data-btn="reset-game"]`)
   resetBtn.addEventListener("click", Game.reset)
-  // resetBtn.setAttribute("data-btn", "reset-btn")
-  // resetBtn.setAttribute("class", "bg-pink-600 hover:bg-pink-700 text-white border rounded-md px-2 border-none")
-  // resetBtn.innerText = "Volver a jugar"
 
   const setMessage = (message) => {
     messageText.innerText = message;
