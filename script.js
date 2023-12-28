@@ -78,7 +78,7 @@ const Game = (function () {
     const [x, y] = grid[boardIndex]
     if (GameBoard.getValue(x, y) !== "") {
       console.log("Valor tomado")
-
+      
     } else {
       if (turn % 2 === 1) {
         playerOne.markBoard(x, y)
