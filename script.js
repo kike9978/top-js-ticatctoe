@@ -238,6 +238,11 @@ const GameRenderer = (function () {
 
   function handleSpaceClick(event) {
     const space = event.target;
+
+    if (!space.getAttribute("data-game").startsWith("space")) {
+      return;
+    }
+
     console.log(event.target)
     const index = Array.from(space.parentNode.children).indexOf(space)
     Game.makeAMove(index)
