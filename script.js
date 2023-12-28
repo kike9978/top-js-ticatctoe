@@ -182,7 +182,7 @@ const GameRenderer = (function () {
   const turn = document.querySelector(`[data-game="turn"]`)
   const currentPlayer = document.querySelector(`[data-game="current-player"]`)
 
-  turn.innerText += ` ${Game.getTurn()}`;
+  turn.innerText = `Turn: ${Game.getTurn()}`;
   currentPlayer.innerText = `Player: ${Game.getTurn() % 2 === 1 ? playerOne.getMark() : playerTwo.getMark()}`
 
   function addBoardEvents() {
@@ -234,6 +234,8 @@ const GameRenderer = (function () {
     deleteResetBtn()
     addBoardEvents()
     resetBoard()
+    turn.innerText = `Turn: 1`;
+    currentPlayer.innerText = `Player: ${playerOne.getMark()}`;
   }
 
   function handleSpaceClick(event) {
@@ -243,7 +245,6 @@ const GameRenderer = (function () {
       return;
     }
 
-    console.log(event.target)
     const index = Array.from(space.parentNode.children).indexOf(space)
     Game.makeAMove(index)
     space.innerText = GameBoard.getBoard().flat()[index];
